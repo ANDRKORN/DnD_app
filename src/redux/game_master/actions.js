@@ -1,0 +1,2 @@
+export const SET_MASTER = 'SET_MASTER';
+export const SET_SHOW_MAP_PLAYERS = 'SET_SHOW_MAP_PLAYERS';

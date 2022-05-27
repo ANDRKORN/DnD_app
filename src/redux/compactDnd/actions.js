@@ -1,0 +1,2 @@
+export const SET_CLASS = 'SET_CLASS';
+export const CLASS_FETCH_REQUESTED = 'CLASS_FETCH_REQUESTED';
