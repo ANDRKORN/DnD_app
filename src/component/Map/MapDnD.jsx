@@ -65,7 +65,7 @@ const Map = ({
       if (this.result && localStorage) {
         if (allMap) {
           for (let item of allMap) {
-            if (item.name === eName || item.url === reader.result) {
+            if (item.text === eName || item.value === reader.result) {
               alert(
                 "Гей мастер бог конечно, но такая карта уже есть кинь D20 на интелект"
               );
@@ -98,8 +98,7 @@ const Map = ({
   };
   const CreateNewFogWar = () => {
     const res = JSON.parse(localStorage.getItem('mapForgs'));    
-    for (let value of res) {
-      console.log(value.name === JSON.parse(localStorage.getItem('selectMaps')))
+    for (let value of res) {      
       if (JSON.parse(localStorage.getItem('selectMaps')) === value.name) {
         const index = res.findIndex(el => el.name === JSON.parse(localStorage.getItem('selectMaps')));
         res[index].forg = false;
@@ -131,8 +130,26 @@ const Map = ({
   }
   const color = ['#DE130D', '#AB62D5', '#0F19DB', '#430408']
   const pl = JSON.parse(localStorage.getItem("players"));
-  const resPl = [];
-  for (let i = 1; i < +pl + 1; i++) {
+  let resPl = [];
+  function resPLGeb (i, arr) {
+    if (i === 0) {
+      return;
+    } else {
+      arr.push(<PlayersMarkerMap 
+        key={i + `playrs${i}`} 
+        selectMap={JSON.parse(localStorage.getItem("selectMaps"))} 
+        players={`playrs${i}`} 
+        refs={imgMap} 
+        open={open} 
+        masterGame={masterGame}
+        color={color[i-1]}
+        pl={pl} 
+        />)
+      resPLGeb(i-1, arr)
+    }
+  }
+  resPLGeb(+pl, resPl)
+  /*for (let i = 1; i < +pl + 1; i++) {
     resPl.push(<PlayersMarkerMap 
       key={i + `playrs${i}`} 
       selectMap={JSON.parse(localStorage.getItem("selectMaps"))} 
@@ -143,7 +160,7 @@ const Map = ({
       color={color[i-1]}
       pl={pl} 
       />)
-  }
+  }*/
   return (
     <>
       {masterGame ? (

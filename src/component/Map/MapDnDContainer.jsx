@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import map from "../../static/map2.jpg";
+import React, { useEffect } from "react";
+// import map from "../../static/map2.jpg";
 import { connect } from "react-redux";
 import { useDispatchData } from "../../help_func";
 import MapDnD from "./MapDnD";

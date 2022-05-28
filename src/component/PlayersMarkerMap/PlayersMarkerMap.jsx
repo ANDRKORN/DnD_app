@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 
 const PlayersMarkerMap = ({color, selectMap, players, open, refs, masterGame, pl }) => {
   const [update, setUpdate] = useState(false);
-  console.log(players)
   setTimeout(() => {
     setUpdate(!update);
   }, 2000);
@@ -17,11 +16,11 @@ const PlayersMarkerMap = ({color, selectMap, players, open, refs, masterGame, pl
   let playersXY = JSON.parse(localStorage.getItem(players)) || 0;
   let kWidth = 1;
   let kHeight = 1;
-  if (localForg.forg && localForg.forg.length > 0) {
+  if (localForg?.forg && localForg?.forg?.length > 0) {
     widthlocalForg = localForg.forg[0].split(",").slice(2, 4)[0];
     heightlocalForg = localForg.forg[0].split(",").slice(2, 4)[1];
   }
-  if (refs.current && localForg.forg && localForg.forg.length > 0) {
+  if (refs.current && localForg?.forg && localForg?.forg?.length > 0) {
     const mapHeight = refs.current.clientHeight;
     const mapWidth = refs.current.clientWidth;
     const changeWidth = localForg.forg.filter((el) => {
@@ -36,7 +35,6 @@ const PlayersMarkerMap = ({color, selectMap, players, open, refs, masterGame, pl
       kWidth = (Math.floor(mapWidth / changeWidth) / widthlocalForg);
       kHeight = (Math.floor(mapHeight / changeHieght) / heightlocalForg);
   }
-  console.log(kWidth, kHeight)
   return (
     <div
       tabIndex={0}

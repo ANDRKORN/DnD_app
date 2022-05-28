@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { connect, useDispatch } from "react-redux";
 import { useDispatchData } from "../../help_func";
 import { CLASS_FETCH_REQUESTED } from "../../redux/compactDnd/actions";

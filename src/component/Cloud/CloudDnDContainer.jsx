@@ -61,7 +61,7 @@ const CloudDnDContainer = ({
       localStorage.setItem("mapForgs", JSON.stringify(localForgMaps))
     }
   }
-  if (localForg && localForg.length !== 0) {       
+  if (localForg && localForg?.forg?.length !== 0) {       
     const changeWidth = localForg.forg.filter((el) => {
       return el.slice(0, 1) === "0";
     }).length;
@@ -86,7 +86,20 @@ const CloudDnDContainer = ({
     widthForg = changeWidth;
   } else {
     localForg = false;
-    for (let i = width; i > 0; i++) {
+    function calcParam (param, mapParam) {
+      if (param > 0) {
+        if (mapParam % param === 1) {
+          return param;
+        } else if (mapParam % param === 0) {
+          return param;
+        } else {
+          return calcParam(param + 1, mapParam)
+        }
+      }
+    }
+    width = calcParam(width, mapWidth);
+    height = calcParam(height, mapHeight);
+    /*for (let i = width; i > 0; i++) {
       if (mapWidth % i === 1) {
         width = i;
         break;
@@ -94,8 +107,8 @@ const CloudDnDContainer = ({
         width = i;
         break;
       }
-    }
-    for (let i = height; i > 0; i++) {
+    }*/
+    /*for (let i = height; i > 0; i++) {
       if (mapHeight % i === 1) {
         height = i;
         break;
@@ -103,7 +116,7 @@ const CloudDnDContainer = ({
         height = i;
         break;
       }
-    }
+    }*/
     if (
       mapHeight * mapWidth !== 0 &&
       imgCloudNew.height * imgCloudNew.width !== 0
