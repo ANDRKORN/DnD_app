@@ -7,6 +7,7 @@ import {
   SET_OPEN_MAP,
   SET_MAP,
   SET_MAP_URL,
+  SET_SELECT_MAPS,
 } from "../../redux/map/actions";
 import PlayersMarkerMap from "../PlayersMarkerMap/PlayersMarkerMap";
 import CloudDnDContainer from "../Cloud/CloudDnDContainer";
@@ -43,7 +44,7 @@ const Map = ({
     useDispatchData({ type: SET_SHOW_FOG_WAR, open: true }, dispatch);
   };
   const OpenMapForPlayers = (val) => {
-      useDispatchData({ type: SET_OPEN_MAP, open: val }, dispatch);
+    useDispatchData({ type: SET_OPEN_MAP, open: val }, dispatch);
   };
   const SetMap = (result, name) => {
     useDispatchData(
@@ -73,7 +74,11 @@ const Map = ({
             }
           }
           allMap.push({ text: eName, value: this.result });
-          localStorage.setItem("maps", JSON.stringify(allMap));
+          try {
+            localStorage.setItem("maps", JSON.stringify(allMap));
+          } catch (err) {
+            alert(err);
+          }
           imgMap.src = reader.result;
           map.src = reader.result;
           SetMap(reader.result, eName);
@@ -92,63 +97,74 @@ const Map = ({
     });
     reader.readAsDataURL(e.files[0]);
   };
+
+  const DeleteMap = (data) => {
+    const eName = data.value;
+    const allMap = JSON.parse(localStorage.getItem("maps"));
+    const newMaps = allMap.filter((el) => el.text !== eName);
+    useDispatchData({ type: SET_SELECT_MAPS, map: newMaps }, dispatch);
+    localStorage.setItem("maps", JSON.stringify(newMaps));
+  };
   const FogWar = () => {
     localStorage.setItem("fog_war_open", JSON.stringify(!fog_war_open));
     useDispatchData({ type: SET_SHOW_FOG_WAR, open: !fog_war_open }, dispatch);
   };
   const CreateNewFogWar = () => {
-    const res = JSON.parse(localStorage.getItem('mapForgs'));    
-    for (let value of res) {      
-      if (JSON.parse(localStorage.getItem('selectMaps')) === value.name) {
-        const index = res.findIndex(el => el.name === JSON.parse(localStorage.getItem('selectMaps')));
+    const res = JSON.parse(localStorage.getItem("mapForgs"));
+    for (let value of res) {
+      if (JSON.parse(localStorage.getItem("selectMaps")) === value.name) {
+        const index = res.findIndex(
+          (el) => el.name === JSON.parse(localStorage.getItem("selectMaps"))
+        );
         res[index].forg = false;
-        console.log(res)
-        localStorage.setItem("mapForgs", JSON.stringify(res))
+        console.log(res);
+        localStorage.setItem("mapForgs", JSON.stringify(res));
       }
     }
-    ;
     localStorage.removeItem("forg");
   };
   if (!masterGame) {
-    setInterval(()=>{ 
+    setInterval(() => {
       if (!masterGame) {
         if (JSON.parse(localStorage.getItem("showMapPlayers"))) {
-          if(!open) {
+          if (!open) {
             OpenMapForPlayers(true);
-            SetUrlMap(JSON.parse(localStorage.getItem("selectMaps")))
+            SetUrlMap(JSON.parse(localStorage.getItem("selectMaps")));
             return;
-          }         
+          }
         } else {
           if (open) {
             OpenMapForPlayers(false);
-            SetUrlMap('#')
+            SetUrlMap("#");
             return;
           }
         }
-      }    
-     }, 10000);
+      }
+    }, 10000);
   }
-  const color = ['#DE130D', '#AB62D5', '#0F19DB', '#430408']
+  const color = ["#DE130D", "#AB62D5", "#0F19DB", "#430408"];
   const pl = JSON.parse(localStorage.getItem("players"));
   let resPl = [];
-  function resPLGeb (i, arr) {
+  function resPLGeb(i, arr) {
     if (i === 0) {
       return;
     } else {
-      arr.push(<PlayersMarkerMap 
-        key={i + `playrs${i}`} 
-        selectMap={JSON.parse(localStorage.getItem("selectMaps"))} 
-        players={`playrs${i}`} 
-        refs={imgMap} 
-        open={open} 
-        masterGame={masterGame}
-        color={color[i-1]}
-        pl={pl} 
-        />)
-      resPLGeb(i-1, arr)
+      arr.push(
+        <PlayersMarkerMap
+          key={i + `playrs${i}`}
+          selectMap={JSON.parse(localStorage.getItem("selectMaps"))}
+          players={`playrs${i}`}
+          refs={imgMap}
+          open={open}
+          masterGame={masterGame}
+          color={color[i - 1]}
+          pl={pl}
+        />
+      );
+      resPLGeb(i - 1, arr);
     }
   }
-  resPLGeb(+pl, resPl)
+  resPLGeb(+pl, resPl);
   /*for (let i = 1; i < +pl + 1; i++) {
     resPl.push(<PlayersMarkerMap 
       key={i + `playrs${i}`} 
@@ -161,6 +177,29 @@ const Map = ({
       pl={pl} 
       />)
   }*/
+  const newselectMap = selectMap.map((el, i) => {
+    el.content = (
+      <div
+        style={{
+          display: "flex",
+          "align-items": "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Dropdown.Item>{el.text}</Dropdown.Item>
+        <Button
+          onClick={(el, data) => {
+            el.stopPropagation();
+            DeleteMap(data);
+          }}
+          icon={"delete"}
+          value={el.text}
+        />
+      </div>
+    );
+    el.key = i;
+    return el;
+  });
   return (
     <>
       {masterGame ? (
@@ -168,9 +207,10 @@ const Map = ({
           <div>
             <Dropdown
               clearable
-              options={selectMap}
+              options={newselectMap}
               selection
               onChange={(e, data) => {
+                console.log(data);
                 localStorage.setItem("selectMaps", JSON.stringify(data.value));
                 SetUrlMap(data.value);
               }}
@@ -233,9 +273,7 @@ const Map = ({
       ) : (
         <></>
       )}
-      <div style={{ position: "relative" }}>
-        {resPl}
-      </div>
+      <div style={{ position: "relative" }}>{resPl}</div>
       <div
         className={s.container}
         style={{ zIndex: 1, maxHeight: "-webkit-fill-available" }}

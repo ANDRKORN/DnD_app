@@ -1,4 +1,4 @@
-import { SET_FOG_WAR, SET_MAP, SET_PLAYERS, SET_OPEN_MAP, SET_SHOW_FOG_WAR, SET_CREATE_FOG_WAR, SET_MAP_URL } from "./actions";
+import { SET_FOG_WAR, SET_MAP, SET_PLAYERS, SET_OPEN_MAP, SET_SHOW_FOG_WAR, SET_CREATE_FOG_WAR, SET_MAP_URL, SET_SELECT_MAPS } from "./actions";
 
 const inzialState = {
     select_maps: [],
@@ -18,6 +18,10 @@ const mapReduser = (state = inzialState, action) => {
             select_maps: [
                 ...state.select_maps,
                 { text: action.map.nameMap, value: action.map.url }],
+        };
+        case SET_SELECT_MAPS: return {
+            ...state,
+            select_maps: action.map,
         };
         case SET_MAP_URL: return {
             ...state, map_img: { url: action.url },
